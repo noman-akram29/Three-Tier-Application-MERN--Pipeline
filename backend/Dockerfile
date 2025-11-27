@@ -1,5 +1,5 @@
 # Base image for backend
-FROM node:21 
+FROM node:21-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -10,8 +10,12 @@ COPY package*.json ./
 # Install required dependencies
 RUN npm install
 
+# Install nodemon for hot reload
+RUN npm install -g nodemon
+
 # Copy the rest of the application code to the working directory
 COPY . .
+
 COPY .env.sample .env
 # Expose the port the app runs on
 EXPOSE 5000

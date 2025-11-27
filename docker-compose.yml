@@ -2,40 +2,49 @@ version: "3.8"
 services:
   mongodb:
     container_name: mongo
-    image: mongo:latest
+    image: mongo:7
     volumes:
-      - ./backend/data:/data
+      - ./backend/data:/data/db
     ports:
       - "27017:27017"
-    
+    restart: unless-stopped
+
   backend:
     container_name: backend
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # build: ./backend
     env_file:
       - ./backend/.env.sample
-    ports:
-      - "5000:5000"
     volumes:
-      - logs:/app/logs
       - ./backend:/app
       - /app/node_modules
+      - logs:/app/logs
+    ports:
+      - "5000:5000"
     depends_on:
       - mongodb
+    restart: unless-stopped
 
   frontend:
     container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # build: ./frontend
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend/src:/app/src
+      - ./frontend:/app
+      - /app/node_modules
     env_file:
       - ./frontend/.env.sample
     stdin_open: true
     tty: true
     depends_on:
       - backend
+    restart: unless-stopped
 
 volumes:
   logs:
-
