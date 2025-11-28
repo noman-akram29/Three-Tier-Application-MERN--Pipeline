@@ -2,6 +2,8 @@ pipeline {
     agent any
     environment {
         SCANNER_HOME = tool 'SonarQube-Scanner-Tool'
+        DOCKER_IMAGE = 'nomanakram29/nodejs-3-tier-application'
+        IMAGE_TAG    = "${BUILD_NUMBER}"
     }
     stages {
         stage('Workspace Cleanup') {
@@ -18,9 +20,12 @@ pipeline {
                 withSonarQubeEnv('SonarQube-Server') {
                     sh '''
                         $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectName=BoardGame \
-                        -Dsonar.projectKey=BoardGame \
-                        -Dsonar.java.binaries=.
+                        -Dsonar.projectName=Three-Tier-Application \
+                        -Dsonar.projectKey=Three-Tier-Application \
+                        -Dsonar.sources=. \
+                        -Dsonar.exclusions=node_modules/**,coverage/**,dist/**,test/** \
+                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                        -Dsonar.sourceEncoding=UTF-8
                     '''
                 }
             }
@@ -42,5 +47,6 @@ pipeline {
                 dependencyCheckPublisher pattern: 'dependency-check-report.html'
             }
         }
+        
     }
 }
