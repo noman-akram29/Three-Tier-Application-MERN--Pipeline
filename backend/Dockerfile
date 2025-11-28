@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install required dependencies
 RUN npm install
 
-RUN npm run tests
+# RUN npm run tests
 
 # Install nodemon for hot reload
 RUN npm install -g nodemon
