@@ -6,7 +6,7 @@ pipeline {
 
         stage('Checkout from SCM') {
             steps {
-                git branch: 'main', credentialsId: 'Github-Token-for-Jenkins', url: 'https://github.com/noman-akram29/Three-Tier-Application-MERN-Pipeline.git'
+                git branch: 'dev', credentialsId: 'Github-Token-for-Jenkins', url: 'https://github.com/noman-akram29/Three-Tier-Application-MERN-Pipeline.git'
             }
         }
     }
