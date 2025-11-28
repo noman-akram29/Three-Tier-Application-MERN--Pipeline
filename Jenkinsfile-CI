@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        SCANNER_HOME = tool 'SonarQube-Scanner-Tool'
+    }
     stages {
         stage('Workspace Cleanup') {
             steps { cleanWs() }
@@ -8,6 +11,25 @@ pipeline {
         stage('Checkout from SCM') {
             steps {
                 git branch: 'dev', credentialsId: 'Github-Token-for-Jenkins', url: 'https://github.com/noman-akram29/Three-Tier-Application-MERN-Pipeline.git'
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube-Server') {
+                    sh '''
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectName=BoardGame \
+                        -Dsonar.projectKey=BoardGame \
+                        -Dsonar.java.binaries=.
+                    '''
+                }
+            }
+        }
+        stage('Quality Gate Scan') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true, credentialsId: 'SonarQube-Token-for-Jenkins'
+                }
             }
         }
     }
